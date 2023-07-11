@@ -9,14 +9,21 @@ class App extends React.Component {
     contacts: [],
     filter: '',
   };
+  componentDidMount() {
+    const localData = localStorage.getItem('contacts');
+    if (localData) this.setState({ contacts: JSON.parse(localData) });
+  }
+  componentDidUpdate(prevProps, prevState) {
+      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+  }
+
   addContacts = contact => {
-    const { contacts} = this.state;
+    const { contacts } = this.state;
     contacts.some(({ name }) => name === contact.name)
       ? alert(` is already in contacts`)
       : this.setState(prevState => ({
-          contacts: [{id: nanoid(), ...contact}, ...prevState.contacts],
+          contacts: [{ id: nanoid(), ...contact }, ...prevState.contacts],
         }));
-       
   };
   deleteContact = e => {
     e.preventDefault();
@@ -37,11 +44,10 @@ class App extends React.Component {
     );
   };
   render() {
-    const {filter } = this.state;
+    const { filter } = this.state;
     return (
       <>
-        <ContactForm onSubmit={this.addContacts}
-        ></ContactForm>
+        <ContactForm onSubmit={this.addContacts}></ContactForm>
         <ContactListFilter
           setFilter={this.setFilter}
           filter={filter}
